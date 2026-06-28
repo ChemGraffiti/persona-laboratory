@@ -245,7 +245,9 @@
     <script>
         // --- 設定 ---
         // 注意: このポータルはバックエンドを持たない静的サイトです。「編集モード」はこのブラウザだけに保存される
-        // ローカル表示カスタマイズ機能であり、アクセス制限ではありません（パスワード等は設けていません）。
+        // ローカル表示カスタマイズ機能です。下記パスワードはページのソースコードに平文で残るため、
+        // 第三者の閲覧を防ぐ実効的なセキュリティ手段ではなく、誤操作防止の簡易な確認に過ぎません。
+        const EDIT_PASSWORD = "nonrem11";
         const STORAGE_KEY = 'my_projects_data_v4';
         const STORAGE_KEY_SETTINGS = 'my_portal_settings_v1';
 
@@ -528,10 +530,21 @@
             if (searchInput && searchInput.value) filterApps(searchInput.value);
         }
 
-        // --- モード切替（ローカル表示カスタマイズのON/OFF。アクセス制限ではない） ---
+        // --- モード切替（ローカル表示カスタマイズのON/OFF。本物のアクセス制限ではない点に注意） ---
         function toggleEditMode() {
-            isEditMode = !isEditMode;
-            renderUI();
+            if (isEditMode) {
+                isEditMode = false;
+                renderUI();
+            } else {
+                const input = prompt("編集モードのパスワードを入力してください:");
+                if (input === null) return;
+                if (input === EDIT_PASSWORD) {
+                    isEditMode = true;
+                    renderUI();
+                } else {
+                    alert("パスワードが違います");
+                }
+            }
         }
 
         function updateHeaderModeUI() {
